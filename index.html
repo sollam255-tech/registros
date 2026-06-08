@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reportes de accidentes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+    h1 { text-align: center; color: #333; }
+    .top { text-align: center; margin-bottom: 20px; }
+    .btn {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin: 5px;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .si { color: green; font-weight: bold; }
+    .no { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1> Reportes de accidentes </h1>
+
+<div class="top">
+  <a href="registrar.html" class="btn"> Agregar registro </a>
+</div>
+
+<div id="lista"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+ apiKey: "TU_API_KEY",
+ authDomain: "revista-motos.firebaseapp.com",
+ projectId: "revista-motos",
+ storageBucket: "revista-motos.firebasestorage.app",
+ messagingSenderId: "554552666157",
+ appId: "1:554552666157:web:5ca3ad332829931436f0a4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const lista = document.getElementById("lista");
+
+// MOSTRAR DATOS
+onSnapshot(collection(db, "Reportes"), (snapshot) => {
+  lista.innerHTML = "";
+  snapshot.forEach((doc) => {
+    const d = doc.data();
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <strong>Edad:</strong> ${d.Edad} <br>
+      <strong>Casco:</strong> <span class="${d.Usa_Casco}">${d.Usa_Casco === 'si' ? 'Sí' : 'No'}</span> <br>
+      <strong>Velocidad:</strong> <span class="${d.Exceso_Velocidad}">${d.Exceso_Velocidad === 'si' ? 'Sí' : 'No'}</span> <br>
+      <strong>Incidente:</strong> ${d.Tipo_Incidente} <br>
+      <strong>Lesiones:</strong> ${d.Lesiones} <br>
+      <strong>Ubicación:</strong> ${d.Ubicación} <br>
+      <strong>Fecha:</strong> ${d.Fecha_Accidente} <br>
+      <a href="${d.Link}" target="_blank" class="btn" style="margin-top:10px;">Ver evidencia</a>
+    `;
+    lista.appendChild(div);
+  });
+});
+</script>
+
+</body>
+</html>
